@@ -2,7 +2,9 @@
   "expo": {
     "name": "AwesomeProject",
     "slug": "AwesomeProject",
-    "version": "1.0.0",
+    "runtimeVersion": "1.0.0",  // Manually set the runtime version here (no policy)
+    "platforms": ["ios", "android"],
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -13,13 +15,21 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "We need your location to show nearby services."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.hecker007.AwesomeProject",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -28,6 +38,9 @@
       "eas": {
         "projectId": "d8e09cc2-b234-4263-a2eb-7287cb334843"
       }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/d8e09cc2-b234-4263-a2eb-7287cb334843"
     }
   }
 }

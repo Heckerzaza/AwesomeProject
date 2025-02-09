@@ -1,0 +1,21 @@
+[
+    {
+      "id": 1,
+      "name": "Trash Bin 1",
+      "latitude": 16.68461892009691,
+      "longitude": 103.74017572224498
+    },
+    {
+      "id": 2,
+      "name": "Trash Bin 2",
+      "latitude": 16.684982210444858,
+      "longitude": 103.74031370349205
+    },
+    {
+      "id": 3,
+      "name": "Trash Bin 3",
+      "latitude": 16.684983290694888, 
+      "longitude": 103.73986148377283
+    }
+  ]
+  
