@@ -16,6 +16,11 @@
       "name": "Trash Bin 3",
       "latitude": 16.684983290694888, 
       "longitude": 103.73986148377283
+    },
+    {
+      "id": 4,
+      "name": "Trash Bin 4",
+      "latitude": 16.436721354318504,  
+      "longitude": 102.84695637986567
     }
-  ]
-  
+]

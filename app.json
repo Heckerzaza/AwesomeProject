@@ -2,8 +2,8 @@
   "expo": {
     "name": "AwesomeProject",
     "slug": "AwesomeProject",
-    "runtimeVersion": "1.0.0",  // Manually set the runtime version here (no policy)
-    "platforms": ["ios", "android" , "web"],
+    "runtimeVersion": "1.0.0",
+    "platforms": ["ios", "android", "web"],
     "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -28,7 +28,9 @@
       "package": "com.hecker007.AwesomeProject",
       "permissions": [
         "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION"
+        "ACCESS_COARSE_LOCATION",
+        "CAMERA",
+        "MEDIA_LIBRARY"
       ]
     },
     "web": {
@@ -41,6 +43,18 @@
     },
     "updates": {
       "url": "https://u.expo.dev/d8e09cc2-b234-4263-a2eb-7287cb334843"
-    }
+    },
+    "plugins": [
+      "expo-rounter",
+      [
+        
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
+        }
+      ]
+    ]
   }
 }

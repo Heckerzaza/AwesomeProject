@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import GeolocationScreen from './GeolocationScreen';
@@ -18,6 +18,13 @@ function HomeScreen({ navigation }) {
         style={[styles.touchableArea, styles.rightSide]}
         onPress={() => navigation.navigate('Geolocation')}
       />
+      {/* Center image */}
+      <View style={styles.centerImageContainer}>
+        <Image
+          source={require('./assets/welcome-image.png')}
+          style={styles.centerImage}
+        />
+      </View>
     </View>
   );
 }
@@ -49,5 +56,17 @@ const styles = StyleSheet.create({
   },
   rightSide: {
     backgroundColor: 'transparent',
+  },
+  centerImageContainer: {
+    position: 'absolute',
+    top: '50%',
+    left: '45%',
+    transform: [{ translateX: -50 }, { translateY: -75 }],
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  centerImage: {
+    width: 150,
+    height: 150,
   },
 });
