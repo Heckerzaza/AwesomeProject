@@ -45,9 +45,7 @@
       "url": "https://u.expo.dev/d8e09cc2-b234-4263-a2eb-7287cb334843"
     },
     "plugins": [
-      "expo-rounter",
       [
-        
         "expo-camera",
         {
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",

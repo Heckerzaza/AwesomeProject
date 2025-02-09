@@ -1,133 +1,98 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
-import { Camera } from 'expo-camera';
-import * as ImageManipulator from 'expo-image-manipulator';
+import { CameraView, useCameraPermissions } from 'expo-camera';
+import { useState, useRef } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 
-export default function CameraScreen() {
-  const [hasPermission, setHasPermission] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.back);
-  const [camera, setCamera] = useState(null);
-  const [capturedImage, setCapturedImage] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [uploadStatus, setUploadStatus] = useState(null); // Null, 'success', 'error'
+export default function App() {
+  const [facing, setFacing] = useState('back');
+  const [permission, requestPermission] = useCameraPermissions();
+  const [flashlightOn, setFlashlightOn] = useState(false);
+  const [photo, setPhoto] = useState(null);
+  const cameraRef = useRef(null);
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === 'granted');
-    })();
-  }, []);
-
-  if (hasPermission === null) {
+  if (!permission) {
+    // Camera permissions are still loading.
     return <View />;
   }
-  if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+
+  if (!permission.granted) {
+    // Camera permissions are not granted yet.
+    return (
+      <View style={styles.container}>
+        <Text style={styles.message}>We need your permission to show the camera</Text>
+        <TouchableOpacity style={styles.permissionButton} onPress={requestPermission}>
+          <Text style={styles.permissionButtonText}>Grant Permission</Text>
+        </TouchableOpacity>
+      </View>
+    );
   }
 
-  const takePicture = async () => {
-    if (camera) {
-      const data = await camera.takePictureAsync({ quality: 0.5, exif: false }); // Adjust quality for smaller file size if needed
-      setCapturedImage(data.uri);
+  // Toggle between front and back camera
+  function toggleCameraFacing() {
+    setFacing(current => (current === 'back' ? 'front' : 'back'));
+  }
+
+  // Toggle flashlight on/off
+  function toggleFlashlight() {
+    setFlashlightOn(current => !current);
+  }
+
+  // Take a picture
+  async function takePicture() {
+    if (cameraRef.current) {
+      const photo = await cameraRef.current.takePictureAsync();
+      setPhoto(photo.uri); // Save the photo URI
     }
-  };
+  }
 
-  const handleRetake = () => {
-    setCapturedImage(null);
-    setUploadStatus(null); // Reset upload status
-  };
+  // Handle "Select" button press
+  function handleSelect() {
+    console.log('Photo selected:', photo); // Add your logic here (e.g., save or upload the photo)
+    resetCamera(); // Automatically reset the camera
+  }
 
-  const handleUpload = async () => {
-    if (!capturedImage) return;
-
-    setUploading(true);
-    setUploadStatus(null); // Reset upload status
-
-    try {
-      // First, resize the image (important for performance and upload speeds)
-      const resizedImage = await ImageManipulator.manipulateAsync(
-        capturedImage,
-        [{ resize: { width: 800 } }], // Adjust width as needed, keeps aspect ratio
-        { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG } // JPEG is smaller, adjust compress as needed
-      );
-
-      const formData = new FormData();
-      formData.append('photo', {
-        uri: resizedImage.uri, // Use the URI of the resized image
-        type: 'image/jpeg', // Adjust type if you use a different format
-        name: 'photo.jpg', // Adjust name as needed
-      });
-
-      const apiUrl = 'YOUR_UPLOAD_API_ENDPOINT'; // Replace with your API endpoint
-
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log('Upload successful!', data);
-      setUploadStatus('success');
-    } catch (error) {
-      console.error('Upload error:', error);
-      setUploadStatus('error');
-    } finally {
-      setUploading(false);
-    }
-  };
+  // Reset the camera view
+  function resetCamera() {
+    setPhoto(null);
+  }
 
   return (
     <View style={styles.container}>
-      {capturedImage ? (
+      {photo ? (
+        // Show the captured photo
         <View style={styles.previewContainer}>
-          <Image source={{ uri: capturedImage }} style={styles.previewImage} />
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={handleRetake}>
-              <Text style={styles.text}>Retake</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={handleUpload} disabled={uploading}>
-              <Text style={styles.text}>{uploading ? 'Uploading...' : 'Upload'}</Text>
+          <Image source={{ uri: photo }} style={styles.previewImage} />
+          <View style={styles.bottomButtonsContainer}>
+            {/* Select Button */}
+            <TouchableOpacity style={styles.selectButton} onPress={handleSelect}>
+              <Text style={styles.buttonText}>Select</Text>
             </TouchableOpacity>
           </View>
-
-          {uploadStatus === 'success' && (
-            <Text style={styles.statusTextSuccess}>Upload successful!</Text>
-          )}
-          {uploadStatus === 'error' && (
-            <Text style={styles.statusTextError}>Upload failed. Please try again.</Text>
-          )}
         </View>
       ) : (
-        <Camera
+        // Show the camera view
+        <CameraView
           style={styles.camera}
-          type={type}
-          ref={(ref) => setCamera(ref)}
+          facing={facing}
+          flash={flashlightOn ? 'on' : 'off'}
+          ref={cameraRef}
         >
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                setType(
-                  type === Camera.Constants.Type.back
-                    ? Camera.Constants.Type.front
-                    : Camera.Constants.Type.back
-                );
-              }}
-            >
-              <Text style={styles.text}> Flip </Text>
+          <View style={styles.bottomButtonsContainer}>
+            {/* Flip Camera Button */}
+            <TouchableOpacity style={styles.circleButton} onPress={toggleCameraFacing}>
+              <Text style={styles.buttonText}>⟳</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={takePicture}>
-              <Text style={styles.text}> Take Picture </Text>
+
+            {/* Take Photo Button */}
+            <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
+              <Text style={styles.buttonText}>📸</Text>
+            </TouchableOpacity>
+
+            {/* Flashlight Button */}
+            <TouchableOpacity style={styles.circleButton} onPress={toggleFlashlight}>
+              <Text style={styles.buttonText}>{flashlightOn ? '🔦' : '⚡️'}</Text>
             </TouchableOpacity>
           </View>
-        </Camera>
+        </CameraView>
       )}
     </View>
   );
@@ -136,28 +101,25 @@ export default function CameraScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+  },
+  message: {
+    textAlign: 'center',
+    paddingBottom: 10,
+    fontSize: 16,
+  },
+  permissionButton: {
+    backgroundColor: '#007AFF',
+    padding: 10,
+    borderRadius: 5,
+    alignSelf: 'center',
+  },
+  permissionButtonText: {
+    color: 'white',
+    fontSize: 16,
   },
   camera: {
     flex: 1,
-  },
-  buttonContainer: {
-    flex: 1,
-    backgroundColor: 'transparent',
-    flexDirection: 'row',
-    margin: 20,
-  },
-  button: {
-    flex: 0.5, // Adjusted to share space equally
-    alignSelf: 'flex-end',
-    alignItems: 'center',
-    backgroundColor: '#DDDDDD', // Added background for visibility
-    padding: 10,
-    marginHorizontal: 5, // Added spacing between buttons
-    borderRadius: 5,
-  },
-  text: {
-    fontSize: 18,
-    color: 'black',
   },
   previewContainer: {
     flex: 1,
@@ -165,18 +127,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   previewImage: {
-    width: '80%',
-    height: '70%',
-    resizeMode: 'contain', // Important for fitting the image
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
-  statusTextSuccess: {
-    color: 'green',
-    marginTop: 10,
-    fontSize: 16,
+  bottomButtonsContainer: {
+    position: 'absolute',
+    bottom: 40,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    paddingHorizontal: 20,
   },
-  statusTextError: {
-    color: 'red',
-    marginTop: 10,
-    fontSize: 16,
+  circleButton: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  captureButton: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  selectButton: {
+    position: 'absolute',
+    right: 20, // Position the "Select" button at the bottom left
+    padding: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 5,
+  },
+  buttonText: {
+    fontSize: 24,
+    color: 'white',
   },
 });
