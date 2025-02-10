@@ -424,16 +424,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 40,
-    backgroundColor: "rgba(219, 255, 134, 0.5)", // Solid gray with transparency
+    backgroundColor: "rgba(255, 255, 255, 0.5)", // Solid gray with transparency
   },
   map: {
     width: "90%",
-    height: "90%",
+    height: "89%",
     justifyContent: "center",
     alignItems: "center",
-    top: 10,
+    top: 20,
     left: 21,
     borderRadius: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5, // For Android shadow
   },
   mapOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -487,7 +492,12 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     alignItems: "center",
     width: "17%",
-    backgroundColor: "rgb(236, 255, 151)",
+    backgroundColor: "rgb(255, 255, 255)",
+    shadowColor: "#000",
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5, // For Android shadow
   },
   actionButtonText: {
     color: "#ffffff",
@@ -510,7 +520,7 @@ const styles = StyleSheet.create({
     width: "29 %",
     flexDirection: 'row', // Add this line for horizontal alignment
     justifyContent: 'space-around', // Add this line to distribute the items evenly
-    backgroundColor: "rgb(210, 255, 126)",
+    backgroundColor: "rgb(255, 255, 255)",
     shadowColor: "#000",
     shadowOffset: { width: 4, height: 4 },
     shadowOpacity: 0.25,
@@ -602,7 +612,7 @@ const styles = StyleSheet.create({
     marginBottom: 20, // Add some space below the title
   },
   line: {
-      top: 10,
+      top: 13,
       height: 2,
       width: '100%',
       backgroundColor: 'black',

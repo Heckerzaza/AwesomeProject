@@ -50,8 +50,9 @@ export default function CameraScreen() {
   const handleBarcodeScanned = ({ data }) => {
     if (isScanningEnabled) {
       setIsScanningEnabled(false); // Disable scanning after processing
-
+      console.log("S=================");
       console.log("Scanned data:", data);
+      console.log("S=================");
       console.log("AllQRCodes:", AllQRCodes);
       console.log("validQRCodes:", validQRCodes);
 
@@ -62,16 +63,6 @@ export default function CameraScreen() {
       } else if (validQRCodes.includes(data)) {
         isValid = true;
       }
-
-      if (isValid) {
-        Alert.alert(
-          `QR Code Scanned Successfully!`,
-          `Data: ${data}`,
-          [{ text: 'OK', onPress: () => console.log('OK Pressed') }]
-        );
-        setScannedBarcode(data);
-        setScanSuccess(true);
-
         // Get current date/time
         const now = new Date();
         const formattedTime = now.toLocaleDateString('en-US', {
@@ -82,15 +73,23 @@ export default function CameraScreen() {
           hour: '2-digit',
           minute: '2-digit',
           hour12: true,
-        });
+        }); 
 
-        const newImageData = {
-          latitude: location?.coords.latitude || 'N/A',
-          longitude: location?.coords.longitude || 'N/A',
-          time: formattedTime,
-          barcode: data || 'N/A',
-        };
+      const newImageData = {
+        time: formattedTime,
+        barcode: data || 'N/A',
+      };
 
+      if (isValid) {
+        Alert.alert(
+          `QR Code Scanned Successfully!`,
+          `Time: ${newImageData.time}`,
+          [{ text: 'OK', onPress: () => console.log('OK Pressed') }]
+        );
+        setScannedBarcode(data);
+        setScanSuccess(true);
+
+  
         addImageToHistory(newImageData); // Save image data
         if (data !== "N/A") {
           saveBarcode(data); // Save barcode to storage
@@ -220,19 +219,29 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgb(255, 255, 255)',
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5, // For Android shadow
   },
   captureButton: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    backgroundColor: 'rgb(255, 255, 255)',
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5, // For Android shadow
   },
   buttonText: {
     fontSize: 24,

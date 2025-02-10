@@ -21,7 +21,7 @@ const Home = ({ navigation }) => {
         const parsedHistory = storedHistory ? JSON.parse(storedHistory) : [];
 
         // Debugging: Log the parsed history to check for errors.
-        console.log("fetchImageHistory - parsedHistory:", parsedHistory); // Debugging
+       //console.log("fetchImageHistory - parsedHistory:", parsedHistory[-1]); // Debugging
         setImageHistory(parsedHistory);
     } catch (error) {
         console.error("Error fetching image history:", error);
@@ -70,6 +70,11 @@ return (
       <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Geolocation')}>
         <Ionicons name="map" size={24} color="black" />
         <Text style={styles.navText}>Maps</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('CameraScreen')}>
+        <Ionicons name="camera" size={24} color="black" />
+        <Text style={styles.navText}>Camera</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Rewards')}>
@@ -196,7 +201,7 @@ export const addImageToHistory = async (newImage) => {
 
       const newHistory = [...history, newImageWithStatus];
       await AsyncStorage.setItem('imageHistory', JSON.stringify(newHistory));
-      console.log("addImageToHistory - newHistory after save", newHistory); // Debugging
+      // console.log("addImageToHistory - newHistory after save", newHistory); // Debugging
   } catch (error) {
       console.error("Error adding image to history:", error);
   }
