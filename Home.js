@@ -17,39 +17,26 @@ const Home = ({ navigation }) => {
 
   const fetchImageHistory = async () => {
     try {
-      const storedHistory = await AsyncStorage.getItem('imageHistory');
-      setImageHistory(storedHistory ? JSON.parse(storedHistory) : []);
+        const storedHistory = await AsyncStorage.getItem('imageHistory');
+        const parsedHistory = storedHistory ? JSON.parse(storedHistory) : [];
+
+        // Debugging: Log the parsed history to check for errors.
+        console.log("fetchImageHistory - parsedHistory:", parsedHistory); // Debugging
+        setImageHistory(parsedHistory);
     } catch (error) {
-      console.error("Error fetching image history:", error);
+        console.error("Error fetching image history:", error);
     }
-  };
+};
 
-  const renderItem = ({ item, index }) => (
-    <View style={[styles.row, index % 2 === 0 ? styles.evenRow : styles.oddRow]}>
-      <Text style={[styles.cell, { flex: 0.3 }]}>{index + 1}</Text>
-      <Text style={[styles.cell, { flex: 1 }]}>{item.time}</Text>
-      <Text style={[styles.cell, { flex: 0.3 }]}>{item.status}</Text>
-    </View>
+const renderItem = ({ item, index }) => {
+  return (
+      <View style={[styles.row, index % 2 === 0 ? styles.evenRow : styles.oddRow]}>
+          <Text style={[styles.cell, { flex: 0.3 }]}>{index + 1}</Text>
+          <Text style={[styles.cell, { flex: 1 }]}>{item.time}</Text>
+          <Text style={[styles.cell, { flex: 0.3 }]}>{'Waiting...'}</Text>
+      </View>
   );
-
-  const filteredHistory = filter
-    ? imageHistory.filter(item => {
-      const date = new Date(item.time); // Assuming item.time is a valid date string
-      switch (filter) {
-        case 'day':
-          // Implement logic to filter by day
-          return true;
-        case 'month':
-          // Implement logic to filter by month
-          return true;
-        case 'year':
-          // Implement logic to filter by year
-          return true;
-        default:
-          return true;
-      }
-    })
-    : imageHistory;
+};
 
   return (
     <View style={styles.container}>
@@ -69,7 +56,7 @@ const Home = ({ navigation }) => {
           <Text style={[styles.headerCell, { flex: 0.3 }]}>Status</Text>
         </View>
         <FlatList
-          data={filteredHistory}
+          data={imageHistory}
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()}
         />
@@ -201,11 +188,16 @@ export default Home;
 // Function to add a new item to the history
 export const addImageToHistory = async (newImage) => {
   try {
-    const storedHistory = await AsyncStorage.getItem('imageHistory');
-    const history = storedHistory ? JSON.parse(storedHistory) : [];
-    const newHistory = [...history, newImage];
-    await AsyncStorage.setItem('imageHistory', JSON.stringify(newHistory));
+      const storedHistory = await AsyncStorage.getItem('imageHistory');
+      const history = storedHistory ? JSON.parse(storedHistory) : [];
+
+      // Add status to the newImage object BEFORE adding to history
+      const newImageWithStatus = { ...newImage, status: 'Waiting...' }; // Add the status here
+
+      const newHistory = [...history, newImageWithStatus];
+      await AsyncStorage.setItem('imageHistory', JSON.stringify(newHistory));
+      console.log("addImageToHistory - newHistory after save", newHistory); // Debugging
   } catch (error) {
-    console.error("Error adding image to history:", error);
+      console.error("Error adding image to history:", error);
   }
 };
