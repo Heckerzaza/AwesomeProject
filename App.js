@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import GeolocationScreen from './GeolocationScreen';
 import CameraScreen from './CameraScreen';
 import Home from "./Home";
+import RewardsScreen from "./Rewards";
 
 function HomeScreen({ navigation }) {
   return (
@@ -31,7 +32,7 @@ export default function App() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen name="Geolocation" component={GeolocationScreen} />
-        <Stack.Screen name="Camera" component={CameraScreen} />
+        <Stack.Screen name="Rewards" component={RewardsScreen} />
         <Stack.Screen name="Home" component={Home} />
       </Stack.Navigator>
     </NavigationContainer>

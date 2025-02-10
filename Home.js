@@ -38,52 +38,52 @@ const renderItem = ({ item, index }) => {
   );
 };
 
-  return (
-    <View style={styles.container}>
-      {/* Add blank space at the top */}
-      <View style={styles.blankSpaceTop} />
+return (
+  <View style={styles.container}>
+    {/* Add blank space at the top */}
+    <View style={styles.blankSpaceTop} />
 
-      {/* Title */}
-      <Text style={styles.title}>Home</Text>
+    {/* Title */}
+    <Text style={styles.title}>Home</Text>
 
-      <View style={styles.line} />
+    <View style={styles.line} />
 
-      {/* History Table */}
-      <View style={styles.table}>
-        <View style={styles.headerRow}>
-          <Text style={[styles.headerCell, { flex: 0.3 }]}>No.</Text>
-          <Text style={[styles.headerCell, { flex: 1 }]}>Time</Text>
-          <Text style={[styles.headerCell, { flex: 0.3 }]}>Status</Text>
-        </View>
-        <FlatList
-          data={imageHistory}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => index.toString()}
-        />
+    {/* History Table */}
+    <View style={styles.table}>
+      <View style={styles.headerRow}>
+        <Text style={[styles.headerCell, { flex: 0.3 }]}>No.</Text>
+        <Text style={[styles.headerCell, { flex: 1 }]}>Time</Text>
+        <Text style={[styles.headerCell, { flex: 0.3 }]}>Status</Text>
       </View>
-      <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
-          <Ionicons name="home" size={24} color="black" />
-          <Text style={styles.navText}>Home</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Geolocation')}>
-          <Ionicons name="map" size={24} color="black" />
-          <Text style={styles.navText}>Maps</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Rewards')}>
-          <Ionicons name="trophy" size={24} color="black" />
-          <Text style={styles.navText}>Rewards</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Settings')}>
-          <Ionicons name="settings" size={24} color="black" />
-          <Text style={styles.navText}>Settings</Text>
-        </TouchableOpacity>
-      </View>
+      <FlatList
+        data={imageHistory}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+      />
     </View>
-  );
+    <View style={styles.bottomNav}>
+      <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('HomeScreen')}>
+        <Ionicons name="home" size={24} color="black" />
+        <Text style={styles.navText}>Home</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Geolocation')}>
+        <Ionicons name="map" size={24} color="black" />
+        <Text style={styles.navText}>Maps</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Rewards')}>
+        <Ionicons name="trophy" size={24} color="black" />
+        <Text style={styles.navText}>Rewards</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Settings')}>
+        <Ionicons name="settings" size={24} color="black" />
+        <Text style={styles.navText}>Settings</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+);
 };
 
 const styles = StyleSheet.create({
