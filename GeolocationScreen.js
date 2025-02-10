@@ -24,6 +24,7 @@ const GeolocationScreen = ({ navigation }) => {
   const [loadingText, setLoadingText] = useState("loading."); // To manage loading text
   const [initialLocationFetched, setInitialLocationFetched] = useState(false);
   const [isTrashBinLoading, setIsTrashBinLoading] = useState(false);
+  const [selectedBin, setSelectedBin] = useState(null);
 
   useEffect(() => {
     const getLocationPermissions = async () => {
@@ -268,8 +269,41 @@ const GeolocationScreen = ({ navigation }) => {
     };
   }, []);
 
+  const handleBinPress = async (bin) => {
+    setSelectedBin(bin);
+    // Request foreground location permission before accessing the location
+    let { status } = await Location.requestForegroundPermissionsAsync();
+
+    if (status !== 'granted') {
+      Alert.alert('Location Access Denied', 'Please enable location permissions to proceed.');
+      return;
+    }
+
+    // Get current location
+    let currentLocation = await Location.getCurrentPositionAsync({});
+
+    const isWithinGeofence = calculateDistance(
+      currentLocation.coords.latitude,
+      currentLocation.coords.longitude,
+      bin.latitude,
+      bin.longitude
+    ) <= 100;
+
+    if (isWithinGeofence) {
+      navigation.navigate('Camera');
+    } else {
+      Alert.alert('Too Far', 'You must be within 10 meters of the trash bin to access the camera.');
+    }
+  };
+
   return (
     <View style={styles.container}>
+      <View style={styles.blankSpaceTop} />
+
+      {/* Title */}
+      <Text style={styles.title}>Home</Text>
+
+      <View style={styles.line} />
       {isLoading && (
         <>
           <View style={styles.mapOverlay} />
@@ -306,6 +340,7 @@ const GeolocationScreen = ({ navigation }) => {
                 }}
                 pinColor="blue"
                 title="Trash Bin"
+                onPress={() => handleBinPress(bin)}
               />
             ))}
         </MapView>
@@ -328,11 +363,11 @@ const GeolocationScreen = ({ navigation }) => {
         {isButtonsVisible && (
           <>
             <TouchableOpacity style={styles.actionButton} onPress={moveToCurrentLocation}>
-              <Text style={styles.actionButtonText}>Current Location</Text>
+              <Text style={styles.actionButtonText}>📍</Text>
             </TouchableOpacity>
   
             <TouchableOpacity style={styles.actionButton} onPress={handleShowTrashBinMenu}>
-              <Text style={styles.actionButtonText}>Show Trash Bin</Text>
+              <Text style={styles.actionButtonText}>🗑️</Text>
             </TouchableOpacity>
           </>
         )}
@@ -356,15 +391,6 @@ const GeolocationScreen = ({ navigation }) => {
               onPress={() => handleRadiusSelection(500)}
             >
               <Text style={styles.radiusButtonText}>500m</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.radiusButton}
-              onPress={() => {
-                setShowCustomInput(true);
-                setShowCustomInputOverlay(true);
-              }}
-            >
-              <Text style={styles.radiusButtonText}>Custom</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -398,10 +424,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 40,
+    backgroundColor: "rgba(219, 255, 134, 0.5)", // Solid gray with transparency
   },
   map: {
-    width: "100%",
-    height: "75%",
+    width: "90%",
+    height: "90%",
+    justifyContent: "center",
+    alignItems: "center",
+    top: 10,
+    left: 21,
+    borderRadius: 15,
   },
   mapOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -424,7 +456,7 @@ const styles = StyleSheet.create({
   circleButton: {
     position: "absolute",
     top: 50,
-    left: 20,
+    left: 15,
     width: 50,
     height: 50,
     borderRadius: 25,
@@ -444,16 +476,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     position: "absolute",
     bottom: 20,
+    left: 150,
     width: "100%",
   },
   actionButton: {
     backgroundColor: "#000000",
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 30,
-    marginVertical: 10,
+    paddingVertical: 25,
+    paddingHorizontal: 25,
+    borderRadius: 90,
+    marginVertical: 15,
     alignItems: "center",
-    width: "80%",
+    width: "17%",
+    backgroundColor: "rgb(236, 255, 151)",
   },
   actionButtonText: {
     color: "#ffffff",
@@ -463,33 +497,30 @@ const styles = StyleSheet.create({
   radiusMenu: {
     width: "80%",
     alignItems: "center",
-    marginVertical: 10,
+    marginVertical: 15,
   },
   radiusButton: {
+    left : "-2%",
     backgroundColor: "#000000",
-    paddingVertical: 10,
+    paddingVertical: 25,
     paddingHorizontal: 25,
-    borderRadius: 25,
-    marginVertical: 5,
+    borderRadius: 90,
+    marginVertical: 10,
     alignItems: "center",
-    width: "100%",
+    width: "29 %",
+    flexDirection: 'row', // Add this line for horizontal alignment
+    justifyContent: 'space-around', // Add this line to distribute the items evenly
+    backgroundColor: "rgb(210, 255, 126)",
+    shadowColor: "#000",
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5, // For Android shadow
   },
   radiusButtonText: {
-    color: "#ffffff",
-    fontSize: 16,
+    color: "#000000",
+    fontSize: 16, 
     fontWeight: "bold",
-  },
-  customRadiusZone: {
-    position: "absolute",
-    top: "30%",
-    left: "10%",
-    right: "10%",
-    backgroundColor: "#ffffff",
-    padding: 20,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 3, // Ensure it appears above the overlay
   },
   customRadiusInput: {
     backgroundColor: "#ffffff",
@@ -505,7 +536,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#000000",
     paddingVertical: 10,
     paddingHorizontal: 30,
-    borderRadius: 25,
+    borderRadius: 15,
     marginTop: 10,
     alignItems: "center",
   },
@@ -513,15 +544,6 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 16,
     fontWeight: "bold",
-  },
-  overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.4)", // Transparency overlay
-    zIndex: 1,
   },
   customRadiusZone: {
     position: "absolute",
@@ -569,7 +591,20 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(128, 128, 128, 0.5)", // Slightly transparent overlay
+    backgroundColor: "rgb(255, 255, 255)", // Slightly transparent overlay
     zIndex: 3, // Ensure it appears under the custom input
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    left: 80,
+    top: 18, 
+    marginBottom: 20, // Add some space below the title
+  },
+  line: {
+      top: 10,
+      height: 2,
+      width: '100%',
+      backgroundColor: 'black',
   },
 });

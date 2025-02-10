@@ -4,27 +4,21 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import GeolocationScreen from './GeolocationScreen';
 import CameraScreen from './CameraScreen';
+import Home from "./Home";
 
 function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      {/* Left side touch for Camera */}
+      {/* Center image touchable */}
       <TouchableOpacity
-        style={[styles.touchableArea, styles.leftSide]}
-        onPress={() => navigation.navigate('Camera')}
-      />
-      {/* Right side touch for Geolocation */}
-      <TouchableOpacity
-        style={[styles.touchableArea, styles.rightSide]}
-        onPress={() => navigation.navigate('Geolocation')}
-      />
-      {/* Center image */}
-      <View style={styles.centerImageContainer}>
+        style={[styles.centerImageContainer]} // Modified style here
+        onPress={() => navigation.navigate('Home')}
+      >
         <Image
           source={require('./assets/welcome-image.png')}
           style={styles.centerImage}
         />
-      </View>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -35,9 +29,10 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen name="Geolocation" component={GeolocationScreen} />
         <Stack.Screen name="Camera" component={CameraScreen} />
+        <Stack.Screen name="Home" component={Home} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -60,8 +55,10 @@ const styles = StyleSheet.create({
   centerImageContainer: {
     position: 'absolute',
     top: '50%',
-    left: '45%',
-    transform: [{ translateX: -50 }, { translateY: -75 }],
+    left: '50%',
+    transform: [{ translateX: -75 }, { translateY: -75 }],
+    width: 150,
+    height: 150,
     justifyContent: 'center',
     alignItems: 'center',
   },
