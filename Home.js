@@ -77,7 +77,7 @@ return (
         <Text style={styles.navText}>Rewards</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Settings')}>
+      <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Setting')}>
         <Ionicons name="settings" size={24} color="black" />
         <Text style={styles.navText}>Settings</Text>
       </TouchableOpacity>

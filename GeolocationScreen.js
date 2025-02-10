@@ -290,7 +290,7 @@ const GeolocationScreen = ({ navigation }) => {
     ) <= 100;
 
     if (isWithinGeofence) {
-      navigation.navigate('Camera');
+      navigation.navigate('CameraScreen');
     } else {
       Alert.alert('Too Far', 'You must be within 10 meters of the trash bin to access the camera.');
     }

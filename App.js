@@ -34,6 +34,7 @@ export default function App() {
         <Stack.Screen name="Geolocation" component={GeolocationScreen} />
         <Stack.Screen name="Rewards" component={RewardsScreen} />
         <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="CameraScreen" component={CameraScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
